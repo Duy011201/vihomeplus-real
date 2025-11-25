@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Check, MapPin, Share2, Heart, User, Shield, ChevronLeft, ChevronRight, Navigation, X, Phone, MessageCircle, Copy, Facebook, Twitter, Mail, CheckCircle, Search, ShoppingBag, GraduationCap, Bus } from 'lucide-react';
+import { ArrowLeft, Check, MapPin, Share2, Heart, User, Shield, ChevronLeft, ChevronRight, Navigation, X, Phone, MessageCircle, Copy, Facebook, Twitter, Mail, CheckCircle, Search, ShoppingBag, GraduationCap, Bus, Clock } from 'lucide-react';
 import { Room } from '../types';
 import { getRoomById, getRelatedRooms } from '../services/api';
 import { RoomCard } from '../components/RoomList';
@@ -20,7 +20,7 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } }
 };
 
 const RoomDetail: React.FC = () => {
@@ -33,6 +33,10 @@ const RoomDetail: React.FC = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [userLocation, setUserLocation] = useState('');
+  
+  // Callback Form State
+  const [callbackForm, setCallbackForm] = useState({ phone: '', time: 'Sáng (8h - 12h)' });
+  const [callbackStatus, setCallbackStatus] = useState<'idle' | 'sending' | 'success'>('idle');
 
   useEffect(() => {
     if (id) {
@@ -74,6 +78,20 @@ const RoomDetail: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCallbackSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCallbackStatus('sending');
+    // Simulate API call
+    setTimeout(() => {
+        setCallbackStatus('success');
+        setTimeout(() => {
+             setShowContactModal(false);
+             setCallbackStatus('idle');
+             setCallbackForm({ phone: '', time: 'Sáng (8h - 12h)' });
+        }, 2000);
+    }, 1500);
+  };
+
   const shareUrl = window.location.href;
   const shareText = room ? `Check out this amazing room at VIHOME PLUS: ${room.title}` : '';
 
@@ -113,6 +131,9 @@ const RoomDetail: React.FC = () => {
                                     exit={{ opacity: 0 }}
                                     transition={{ duration: 0.3 }}
                                     className="w-full h-full object-cover" 
+                                    loading="eager"
+                                    // @ts-ignore
+                                    fetchPriority="high"
                                 />
                             </AnimatePresence>
 
@@ -171,7 +192,12 @@ const RoomDetail: React.FC = () => {
                                         : 'opacity-60 hover:opacity-100'
                                     }`}
                                 >
-                                    <img src={img} alt={`Thumb ${i}`} className="w-full h-full object-cover" />
+                                    <img 
+                                        src={img} 
+                                        alt={`Thumb ${i}`} 
+                                        className="w-full h-full object-cover"
+                                        loading="lazy" 
+                                    />
                                 </button>
                             ))}
                         </div>
@@ -293,7 +319,13 @@ const RoomDetail: React.FC = () => {
 
                                 {/* Right Column: Map & Directions */}
                                 <div className="space-y-4">
-                                    <div className="w-full h-64 bg-slate-100 rounded-2xl overflow-hidden relative shadow-md border border-slate-200">
+                                    <motion.div 
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.5 }}
+                                        className="w-full h-64 bg-slate-100 rounded-2xl overflow-hidden relative shadow-md border border-slate-200"
+                                    >
                                         <iframe
                                             width="100%"
                                             height="100%"
@@ -306,7 +338,7 @@ const RoomDetail: React.FC = () => {
                                             className="hover:opacity-90 transition-opacity"
                                             loading="lazy"
                                         ></iframe>
-                                    </div>
+                                    </motion.div>
 
                                     <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
                                         <div className="flex flex-col gap-3">
@@ -330,6 +362,26 @@ const RoomDetail: React.FC = () => {
                                                 {userLocation ? 'Chỉ đường ngay' : 'Mở Google Maps'}
                                             </a>
                                         </div>
+
+                                        <div className="pt-4 border-t border-slate-100 mt-2">
+                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block flex items-center gap-1">
+                                                <Search className="w-3 h-3" /> Tiện ích xung quanh:
+                                            </span>
+                                            <div className="flex flex-wrap gap-2">
+                                                {['Trường học', 'Chợ', 'Bến xe buýt', 'Bệnh viện', 'Siêu thị', 'ATM', 'Phòng Gym'].map((place) => (
+                                                    <a 
+                                                        key={place}
+                                                        href={`https://www.google.com/maps/search/${encodeURIComponent(place)}/@${room.coordinates.lat},${room.coordinates.lng},15z`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:border-brand-500 hover:text-brand-600 hover:bg-white hover:shadow-sm transition-all cursor-pointer"
+                                                        title={`Tìm ${place} trên Google Maps`}
+                                                    >
+                                                        {place}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -348,13 +400,18 @@ const RoomDetail: React.FC = () => {
                         <div className="bg-white rounded-2xl p-6 shadow-xl border border-brand-100">
                             <h3 className="font-bold text-lg mb-4">Thông tin chủ nhà</h3>
                             <div className="flex items-center gap-4 mb-6">
-                                <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center">
-                                    <User className="w-6 h-6 text-slate-500" />
+                                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm">
+                                    <img 
+                                        src={room.host?.avatar || "https://ui-avatars.com/api/?name=V+H&background=random"} 
+                                        alt={room.host?.name} 
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
+                                    />
                                 </div>
                                 <div>
-                                    <div className="font-bold text-slate-900">Ban Quản Lý VIHOME</div>
-                                    <div className="text-xs text-green-600 font-bold flex items-center gap-1">
-                                        <Shield className="w-3 h-3" /> Đã xác thực
+                                    <div className="font-bold text-slate-900 text-lg">{room.host?.name || "Ban Quản Lý"}</div>
+                                    <div className="text-xs text-green-600 font-bold flex items-center gap-1 mt-1">
+                                        <Shield className="w-3 h-3 fill-current" /> Đã xác thực
                                     </div>
                                 </div>
                             </div>
@@ -418,11 +475,16 @@ const RoomDetail: React.FC = () => {
                             <X className="w-5 h-5" />
                         </button>
 
-                        <div className="text-center mb-8 pt-4">
-                            <div className="w-24 h-24 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-lg">
-                                <User className="w-10 h-10 text-brand-600" />
+                        <div className="text-center mb-6 pt-4">
+                            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto mb-4 bg-slate-100">
+                                <img 
+                                    src={room.host?.avatar || "https://ui-avatars.com/api/?name=V+H&background=random"} 
+                                    alt={room.host?.name} 
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                />
                             </div>
-                            <h3 className="text-2xl font-bold text-slate-900 mb-1">Ban Quản Lý VIHOME</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-1">{room.host?.name || "Ban Quản Lý"}</h3>
                             <div className="flex items-center justify-center gap-1 text-green-600 font-medium text-sm">
                                 <Shield className="w-4 h-4 fill-current" />
                                 Đã xác minh danh tính
@@ -430,13 +492,13 @@ const RoomDetail: React.FC = () => {
                         </div>
 
                         <div className="space-y-4">
-                            <a href="tel:19001234" className="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:bg-slate-50 hover:border-brand-200 transition-all group">
+                            <a href={`tel:${room.host?.phone}`} className="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:bg-slate-50 hover:border-brand-200 transition-all group">
                                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform shadow-sm">
                                     <Phone className="w-5 h-5 fill-current" />
                                 </div>
                                 <div>
                                     <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gọi điện ngay</div>
-                                    <div className="text-lg font-bold text-slate-800 group-hover:text-brand-600 transition-colors">1900 1234</div>
+                                    <div className="text-lg font-bold text-slate-800 group-hover:text-brand-600 transition-colors">{room.host?.phone}</div>
                                 </div>
                             </a>
 
@@ -446,14 +508,59 @@ const RoomDetail: React.FC = () => {
                                 </div>
                                 <div>
                                     <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Chat Zalo</div>
-                                    <div className="text-lg font-bold text-slate-800 group-hover:text-brand-600 transition-colors">0912 345 678</div>
+                                    <div className="text-lg font-bold text-slate-800 group-hover:text-brand-600 transition-colors">{room.host?.zalo}</div>
                                 </div>
                             </a>
                         </div>
                         
-                        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-                            <p className="text-xs text-slate-500">
-                                Để đảm bảo an toàn, vui lòng liên hệ qua các kênh chính thức của VIHOME PLUS.
+                        {/* Callback Form */}
+                        <div className="mt-6 border-t border-slate-100 pt-6">
+                            <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-brand-600" />
+                                Yêu cầu gọi lại
+                            </h4>
+                            <form onSubmit={handleCallbackSubmit} className="space-y-3">
+                                <div>
+                                    <input 
+                                        required
+                                        type="tel" 
+                                        placeholder="Số điện thoại của bạn"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500 text-slate-800"
+                                        value={callbackForm.phone}
+                                        onChange={e => setCallbackForm({...callbackForm, phone: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <select
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500 text-slate-800 cursor-pointer"
+                                        value={callbackForm.time}
+                                        onChange={e => setCallbackForm({...callbackForm, time: e.target.value})}
+                                    >
+                                        <option value="Sáng (8h - 12h)">Liên hệ vào Buổi Sáng</option>
+                                        <option value="Chiều (13h - 17h)">Liên hệ vào Buổi Chiều</option>
+                                        <option value="Tối (18h - 21h)">Liên hệ vào Buổi Tối</option>
+                                        <option value="Bất cứ lúc nào">Bất cứ lúc nào</option>
+                                    </select>
+                                </div>
+                                <button 
+                                    disabled={callbackStatus === 'sending'}
+                                    type="submit"
+                                    className={`w-full bg-slate-900 text-white py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors flex justify-center items-center gap-2 ${callbackStatus === 'success' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                                >
+                                    {callbackStatus === 'sending' ? (
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                    ) : callbackStatus === 'success' ? (
+                                        <>Đã gửi yêu cầu <CheckCircle className="w-4 h-4" /></>
+                                    ) : (
+                                        'Gửi yêu cầu'
+                                    )}
+                                </button>
+                            </form>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-slate-100 text-center">
+                            <p className="text-xs text-slate-400">
+                                Chúng tôi sẽ liên hệ lại trong thời gian sớm nhất.
                             </p>
                         </div>
                     </motion.div>

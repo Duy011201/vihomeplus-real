@@ -19,6 +19,12 @@ export interface Room {
     universities: string;
     transportation: string;
   };
+  host?: {
+    name: string;
+    avatar: string;
+    phone: string;
+    zalo: string;
+  };
 }
 
 export interface BlogPost {
