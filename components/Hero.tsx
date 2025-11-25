@@ -71,7 +71,15 @@ const Hero: React.FC = () => {
            className="relative hidden lg:block"
         >
              <div className="relative rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-all duration-500 border-8 border-white">
-                <img src="https://picsum.photos/id/15/800/1000" alt="Hero Room" className="object-cover h-[600px] w-full" />
+                <img 
+                    src="https://picsum.photos/id/15/800/1000.webp" 
+                    alt="Hero Room" 
+                    className="object-cover h-[600px] w-full" 
+                    width="800"
+                    height="1000"
+                    // @ts-ignore
+                    fetchPriority="high"
+                />
                 
                 <motion.div 
                     initial={{ x: 50, opacity: 0 }}
