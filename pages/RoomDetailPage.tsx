@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Check, MapPin, Share2, Heart, User, Shield, ChevronLeft, ChevronRight, Navigation, X, Phone, MessageCircle, Copy, Facebook, Twitter, Mail, CheckCircle, Search } from 'lucide-react';
+import { ArrowLeft, Check, MapPin, Share2, Heart, User, Shield, ChevronLeft, ChevronRight, Navigation, X, Phone, MessageCircle, Copy, Facebook, Twitter, Mail, CheckCircle, Search, ShoppingBag, GraduationCap, Bus } from 'lucide-react';
 import { Room } from '../types';
 import { getRoomById, getRelatedRooms } from '../services/api';
 import { RoomCard } from '../components/RoomList';
@@ -237,73 +237,98 @@ const RoomDetail: React.FC = () => {
                             </div>
                         </motion.div>
 
-                        {/* Enhanced Map Section */}
+                        {/* Enhanced Map & Location Section (Split Layout) */}
                         <motion.div variants={itemVariants} className="mt-8 pt-8 border-t border-slate-100">
-                            <h3 className="text-xl font-bold mb-4">Vị trí & Di chuyển</h3>
+                            <h3 className="text-2xl font-bold mb-6 text-slate-900">Vị Trí & Tiện Ích Xung Quanh</h3>
                             
-                            <div className="w-full h-80 bg-slate-100 rounded-2xl overflow-hidden relative mb-6 shadow-inner border border-slate-200">
-                                <iframe
-                                    width="100%"
-                                    height="100%"
-                                    frameBorder="0"
-                                    scrolling="no"
-                                    marginHeight={0}
-                                    marginWidth={0}
-                                    src={`https://maps.google.com/maps?q=${room.coordinates.lat},${room.coordinates.lng}&hl=vi&z=15&output=embed`}
-                                    title="Vị trí phòng trọ"
-                                    className="filter grayscale hover:grayscale-0 transition-all duration-500"
-                                    loading="lazy"
-                                ></iframe>
-                            </div>
-
-                            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="flex flex-col gap-4">
-                                     <div>
-                                        <h4 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
-                                            <MapPin className="w-4 h-4 text-brand-600" /> 
-                                            {room.location}
-                                        </h4>
-                                        <p className="text-sm text-slate-500">Tìm đường đi nhanh nhất đến căn phòng này từ vị trí của bạn.</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {/* Left Column: Location Details */}
+                                <div className="space-y-6">
+                                    <div className="bg-brand-50 p-5 rounded-xl border border-brand-100">
+                                        <h4 className="font-bold text-brand-800 text-lg mb-2">Vị Trí Đắc Địa</h4>
+                                        <p className="text-slate-600 text-sm leading-relaxed">
+                                            Hệ thống VIHOME PLUS tọa lạc tại các vị trí trung tâm, thuận tiện di chuyển đến trường học, công sở và các khu vui chơi giải trí.
+                                        </p>
                                     </div>
 
-                                    <div className="flex flex-col md:flex-row gap-3">
-                                        <div className="flex-1 relative">
-                                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                            <input 
-                                                type="text" 
-                                                placeholder="Nhập vị trí của bạn (VD: Ngã Tư Sở...)"
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all text-sm"
-                                                value={userLocation}
-                                                onChange={(e) => setUserLocation(e.target.value)}
-                                            />
+                                    <div>
+                                        <h4 className="font-bold text-slate-800 mb-4 border-l-4 border-brand-500 pl-3">Tiện ích ngoại khu (Bán kính 1km)</h4>
+                                        
+                                        <div className="space-y-4">
+                                            {/* Shopping */}
+                                            <div className="flex gap-4 group">
+                                                <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                                    <ShoppingBag className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <h5 className="font-bold text-slate-900 text-sm">Mua sắm & Giải trí</h5>
+                                                    <p className="text-slate-600 text-sm mt-1">{room.nearby?.shopping || 'Đang cập nhật...'}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Universities */}
+                                            <div className="flex gap-4 group">
+                                                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                                    <GraduationCap className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <h5 className="font-bold text-slate-900 text-sm">Trường Đại Học</h5>
+                                                    <p className="text-slate-600 text-sm mt-1">{room.nearby?.universities || 'Đang cập nhật...'}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Transport */}
+                                            <div className="flex gap-4 group">
+                                                <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                                    <Bus className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <h5 className="font-bold text-slate-900 text-sm">Giao Thông</h5>
+                                                    <p className="text-slate-600 text-sm mt-1">{room.nearby?.transportation || 'Đang cập nhật...'}</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <a 
-                                            href={`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(userLocation)}&destination=${room.coordinates.lat},${room.coordinates.lng}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center justify-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all shadow-md whitespace-nowrap active:scale-95"
-                                        >
-                                            <Navigation className="w-5 h-5" /> 
-                                            {userLocation ? 'Chỉ đường từ đây' : 'Chỉ đường'}
-                                        </a>
+                                    </div>
+                                </div>
+
+                                {/* Right Column: Map & Directions */}
+                                <div className="space-y-4">
+                                    <div className="w-full h-64 bg-slate-100 rounded-2xl overflow-hidden relative shadow-md border border-slate-200">
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            frameBorder="0"
+                                            scrolling="no"
+                                            marginHeight={0}
+                                            marginWidth={0}
+                                            src={`https://maps.google.com/maps?q=${room.coordinates.lat},${room.coordinates.lng}&hl=vi&z=15&output=embed`}
+                                            title="Vị trí phòng trọ"
+                                            className="hover:opacity-90 transition-opacity"
+                                            loading="lazy"
+                                        ></iframe>
                                     </div>
 
-                                    <div className="pt-4 border-t border-slate-100 mt-2">
-                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block flex items-center gap-1">
-                                            <Search className="w-3 h-3" /> Tiện ích xung quanh:
-                                        </span>
-                                        <div className="flex flex-wrap gap-2">
-                                            {['Trường học', 'Chợ', 'Bến xe buýt', 'Bệnh viện', 'Siêu thị', 'ATM', 'Phòng Gym'].map((place) => (
-                                                <a 
-                                                    key={place}
-                                                    href={`https://www.google.com/maps/search/${place}/@${room.coordinates.lat},${room.coordinates.lng},16z`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:border-brand-500 hover:text-brand-600 hover:bg-white hover:shadow-sm transition-all"
-                                                >
-                                                    {place}
-                                                </a>
-                                            ))}
+                                    <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                        <div className="flex flex-col gap-3">
+                                            <div className="relative">
+                                                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="Vị trí của bạn..."
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all text-sm"
+                                                    value={userLocation}
+                                                    onChange={(e) => setUserLocation(e.target.value)}
+                                                />
+                                            </div>
+                                            <a 
+                                                href={`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(userLocation)}&destination=${room.coordinates.lat},${room.coordinates.lng}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center gap-2 bg-brand-600 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-brand-700 transition-all shadow-sm active:scale-95 text-sm"
+                                            >
+                                                <Navigation className="w-4 h-4" /> 
+                                                {userLocation ? 'Chỉ đường ngay' : 'Mở Google Maps'}
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

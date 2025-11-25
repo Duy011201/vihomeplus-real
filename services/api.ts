@@ -17,7 +17,12 @@ const ROOMS: Room[] = [
     description: 'Căn hộ Studio đầy đủ tiện nghi, thiết kế hiện đại, ban công thoáng mát. Vị trí trung tâm gần các trường đại học lớn.',
     type: 'Studio',
     rating: 4.8,
-    coordinates: { lat: 21.03, lng: 105.78 }
+    coordinates: { lat: 21.03, lng: 105.78 },
+    nearby: {
+      shopping: 'Gần IPH, Discovery Complex, Chợ Nhà Xanh',
+      universities: 'ĐH Quốc Gia, Sư Phạm, Báo Chí, Thương Mại',
+      transportation: 'Gần Bến xe Mỹ Đình, trạm xe bus, Metro Nhổn'
+    }
   },
   {
     id: '2',
@@ -34,7 +39,12 @@ const ROOMS: Room[] = [
     description: 'Căn hộ Duplex trần cao, không gian mở sang trọng. Thích hợp cho cặp đôi hoặc người đi làm cần không gian yên tĩnh.',
     type: 'Duplex',
     rating: 4.9,
-    coordinates: { lat: 10.77, lng: 106.69 }
+    coordinates: { lat: 10.77, lng: 106.69 },
+    nearby: {
+        shopping: 'Gần Chợ Bến Thành, Vincom Center',
+        universities: 'ĐH Kinh Tế, Kiến Trúc, Mở',
+        transportation: 'Gần Ga Sài Gòn, trạm xe bus trung tâm'
+      }
   },
   {
     id: '3',
@@ -51,7 +61,12 @@ const ROOMS: Room[] = [
     description: 'Phòng trọ sạch sẽ, an ninh tốt, giờ giấc tự do. Gần chợ và bến xe buýt.',
     type: '1 Ngủ',
     rating: 4.2,
-    coordinates: { lat: 20.99, lng: 105.80 }
+    coordinates: { lat: 20.99, lng: 105.80 },
+    nearby: {
+        shopping: 'Gần Royal City, Big C Thăng Long',
+        universities: 'ĐH Khoa học Tự nhiên, Xã hội Nhân văn',
+        transportation: 'Gần đường vành đai 3, trạm xe bus'
+      }
   },
   {
     id: '4',
@@ -68,7 +83,12 @@ const ROOMS: Room[] = [
     description: 'Căn hộ 2 phòng ngủ rộng rãi, view Landmark 81. Tiện ích tòa nhà đầy đủ.',
     type: '2 Ngủ',
     rating: 4.7,
-    coordinates: { lat: 10.80, lng: 106.71 }
+    coordinates: { lat: 10.80, lng: 106.71 },
+    nearby: {
+        shopping: 'Gần Chợ Bà Chiểu, Vincom Plaza, Emart',
+        universities: 'ĐH Hutech, UEF, Ngoại Thương, GTVT',
+        transportation: 'Gần Bến xe Miền Đông, trạm xe bus, sân bay TSN'
+    }
   },
   {
     id: '5',
@@ -85,7 +105,12 @@ const ROOMS: Room[] = [
     description: 'Phong cách vintage ấm cúng, ngay mặt hồ Xã Đàn. Không gian cực chill.',
     type: 'Studio',
     rating: 4.6,
-    coordinates: { lat: 21.01, lng: 105.82 }
+    coordinates: { lat: 21.01, lng: 105.82 },
+    nearby: {
+        shopping: 'Gần Vincom Phạm Ngọc Thạch, Chợ Thái Hà',
+        universities: 'ĐH Công Đoàn, Thủy Lợi, Y Hà Nội',
+        transportation: 'Gần ga Cát Linh, trạm xe bus'
+      }
   }
 ];
 

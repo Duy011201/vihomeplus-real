@@ -14,6 +14,11 @@ export interface Room {
   type: 'Studio' | '1 Ngủ' | '2 Ngủ' | 'Duplex';
   rating: number;
   coordinates: { lat: number; lng: number };
+  nearby?: {
+    shopping: string;
+    universities: string;
+    transportation: string;
+  };
 }
 
 export interface BlogPost {
